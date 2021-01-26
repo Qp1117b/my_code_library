@@ -5,8 +5,6 @@
 #include <map>
 #include <algorithm>
 #include <bits/stdc++.h>
-#include <time.h>
-#include <stdlib.h>
 #include <random>
 
 using namespace std;
@@ -25,7 +23,166 @@ struct EIC_ORDER_ITEM
 };
 extern struct EIC_ORDER_ITEM eic_order_item;
 
-vector<pair<int, int>> my_lib_func_eic(vector<int> data, int direction); //这个函数计算一个数组中不同数的个数，然后按照给出的方式排序，返回一个vector<pair<int,int>>
+template <class T> //这个模板类计算一组数据中不同元素的个数，然后按照给出的方式排序，返回一个vector<pair<T,int>>
+class my_lib_class_eic {
+public:
+    static vector<pair<T, int>> my_lib_func_eic(vector<T> data, int direction);
+private:
+    static bool eic_cmpdata(T x, T y);
+    static bool eic_numdown(pair<T, int> a, pair<T, int> b);
+    static bool eic_numcmpup(pair<T, int> a, pair<T, int> b);
+    static bool eic_countdown(pair<T, int> a, pair<T, int> b);
+    static bool eic_countcmpup(pair<T, int> a, pair<T, int> b);
+    static bool eic_countdownup(pair<T, int> a, pair<T, int> b);
+    static bool eic_countdowndown(pair<T, int> a, pair<T, int> b);
+    static bool eic_countupdown(pair<T, int> a, pair<T, int> b);
+    static bool eic_countupup(pair<T, int> a, pair<T, int> b);
+};
+
+template <class T>
+bool my_lib_class_eic<T>::eic_cmpdata(T x, T y)
+{
+    return x > y;
+}
+
+template <class T>
+bool my_lib_class_eic<T>::eic_numdown(pair<T, int> a, pair<T, int> b)
+{
+    return a.first > b.first;
+}
+
+template <class T>
+bool my_lib_class_eic<T>::eic_numcmpup(pair<T, int> a, pair<T, int> b)
+{
+    return a.first < b.first;
+}
+
+template <class T>
+bool my_lib_class_eic<T>::eic_countdown(pair<T, int> a, pair<T, int> b)
+{
+    return a.second > b.second;
+}
+
+template <class T>
+bool my_lib_class_eic<T>::eic_countcmpup(pair<T, int> a, pair<T, int> b)
+{
+    return a.second < b.second;
+}
+
+template <class T>
+bool my_lib_class_eic<T>::eic_countdownup(pair<T, int> a, pair<T, int> b)
+{
+    if (a.second == b.second)
+        return a.first < b.first;
+
+    return a.second > b.second;
+}
+
+template <class T>
+bool my_lib_class_eic<T>::eic_countdowndown(pair<T, int> a, pair<T, int> b)
+{
+    if (a.second == b.second)
+        return a.first > b.first;
+
+    return a.second > b.second;
+}
+
+template <class T>
+bool my_lib_class_eic<T>::eic_countupdown(pair<T, int> a, pair<T, int> b)
+{
+    if (a.second == b.second)
+        return a.first > b.first;
+
+    return a.second < b.second;
+}
+
+template <class T>
+bool my_lib_class_eic<T>::eic_countupup(pair<T, int> a, pair<T, int> b)
+{
+    if (a.second == b.second)
+        return a.first < b.first;
+
+    return a.second < b.second;
+}
+
+template <class T>
+vector<pair<T, int>>  my_lib_class_eic<T>::my_lib_func_eic(vector<T> data, int direction)
+{
+    map<T, int> datamap;
+    int size = data.size();
+
+    sort(data.begin(), data.end(), eic_cmpdata);
+
+    int j = 0;
+    int count = 1;
+    for (int y = 0; y < size; y++)
+    {
+        for (; j < size - 1; )
+        {
+            count = 1;
+            for (; j < size - 1; j++)
+            {
+                if (data[j] == data[j + 1])
+                {
+                    count++;
+                }
+                else
+                {
+                    j++;
+                    break;
+                }
+            }
+            datamap.insert(pair<T, int>(data[j - 1], count));
+        }
+
+        if (y == size - 1)
+        {
+            datamap.insert(pair<T, int>(data[j], count));
+        }
+    }
+
+    vector<pair<T, int>> out(datamap.begin(), datamap.end());
+
+    if (direction == eic_order_item.COUNT_DOWN)
+    {
+        sort(out.begin(), out.end(), eic_countdown);
+    }
+    else if (direction == eic_order_item.COUNT_UP)
+    {
+        sort(out.begin(), out.end(), eic_countcmpup);
+    }
+    else if (direction == eic_order_item.NUM_DOWN)
+    {
+        sort(out.begin(), out.end(), eic_numdown);
+    }
+    else if (direction == eic_order_item.NUM_UP)
+    {
+        sort(out.begin(), out.end(), eic_numcmpup);
+    }
+    else if (direction == eic_order_item.COUNT_DOWN_UP)
+    {
+        sort(out.begin(), out.end(), eic_countdown);
+        sort(out.begin(), out.end(), eic_countdownup);
+    }
+    else if (direction == eic_order_item.COUNT_DOWN_DOWN)
+    {
+        sort(out.begin(), out.end(), eic_countdown);
+        sort(out.begin(), out.end(), eic_countdowndown);
+    }
+    else if (direction == eic_order_item.COUNT_UP_UP)
+    {
+        sort(out.begin(), out.end(), eic_countcmpup);
+        sort(out.begin(), out.end(), eic_countupup);
+    }
+    else if (direction == eic_order_item.COUNT_UP_DOWN)
+    {
+        sort(out.begin(), out.end(), eic_countcmpup);
+        sort(out.begin(), out.end(), eic_countupdown);
+    }
+
+    return out;
+}
+
 
 vector<int> my_lib_func_random(int min, int max,int count); //这个函数返回指定的（最小）min 到 （最大）max的（个数）count个的随机数，以vector<int>返回
 
@@ -91,5 +248,4 @@ T my_lib_func_pGRand(vector<pair<T, int>> in) //返回数据中以指定概率�
 
     return data[d(gen)];
 }
-
 #endif
