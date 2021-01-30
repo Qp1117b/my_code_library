@@ -14,7 +14,6 @@ struct OBJECT_SHAPE
 	int CIRCLE = 50;
 	int TRI = 3;
 	int SQR = 4;
-	int FIVE = 5;
 };
 extern struct OBJECT_TAG obj_tag;
 extern struct OBJECT_SHAPE obj_shape;
